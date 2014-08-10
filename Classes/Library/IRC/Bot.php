@@ -119,6 +119,8 @@ class Bot {
      */
     private $logFileHandler = null;
 
+    private $initialCommands = array();
+
     /**
      * Creates a new IRCBot.
      *
@@ -167,6 +169,10 @@ class Bot {
         $this->connection->connect();
         $this->sendDataToServer( 'USER ' . $this->nickToUse . ' Layne-Obserdia.de ' . $this->nickToUse . ' :' . $this->name );
         $this->sendDataToServer( 'NICK ' . $this->nickToUse );
+        
+        foreach($this->initialCommands as $cmd) {
+            $this->sendDataToServer($cmd);
+        }
 
         $this->main();
     }
@@ -447,6 +453,12 @@ class Bot {
             }
             $this->logFile .= date( 'd-m-Y' ) . '.log';
             $this->logFileHandler = fopen( $this->logFile, 'w+' );
+        }
+    }
+
+    public function setInitialCommands($commands) {
+        if($commands && is_array($commands)) {
+            $this->initialCommands = $commands;
         }
     }
 
