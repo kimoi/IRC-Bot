@@ -29,6 +29,8 @@
         $config = include_once(ROOT_DIR . '/config.php');
     }
 
+    require $config['mangaApi'];
+
     spl_autoload_register( 'Autoloader::load' );
 
     // Create the bot.

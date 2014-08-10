@@ -59,7 +59,7 @@
          *
          * @var string
          */
-        private $data;
+        protected $data;
 
         /**
          * The number of arguments the command needs.
@@ -113,13 +113,17 @@
          *
          * @param string $msg
          */
-       protected function say($msg) {
+       protected function say($msg, $source = null) {
+            if(!$source) {
+                $source = $this->source;
+            }
+
             $this->connection->sendData(
-                    'PRIVMSG ' . $this->source . ' :' . $msg
+                    'PRIVMSG ' . $source . ' :' . $msg
             );
         }
 
-        private function getHelp() {
+        protected function getHelp() {
            return $this->help;
         }
 

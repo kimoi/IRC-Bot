@@ -457,5 +457,13 @@ class Bot {
     public function getCommandPrefix() {
         return $this->commandPrefix;
     }
+
+    public function getName() {
+        return $this->name;
+    }
+
+    public function getNick() {
+        return $this->nick;
+    }
 }
 ?>
