@@ -79,6 +79,8 @@
          */
         protected $help = '';
 
+        public $prefix = '!';
+
         /**
          * Executes the command.
          *
@@ -93,13 +95,7 @@
             // Set data
             $this->data = $data;
 
-            // If a number of arguments is incorrect then run the command, if
-            // not then show the relevant help text.
-            if ($this->numberOfArguments != -1 && count( $arguments ) != $this->numberOfArguments) {
-                // Show help text.
-                $this->say(' Incorrect Arguments. Usage: ' . $this->getHelp());
-            }
-            else {
+            if($this->validateCommand($arguments, $source, $data)) {
                 // Set Arguments
                 $this->arguments = $arguments;
 
@@ -108,18 +104,39 @@
             }
         }
 
+        protected function validateCommand(array $arguments, $source, $data) {
+
+            // If a number of arguments is incorrect then run the command, if
+            // not then show the relevant help text.
+            if($this->numberOfArguments != -1 && count( $arguments ) != $this->numberOfArguments) {
+                $this->say('Incorrect Arguments. Usage: ' . $this->getHelp());
+
+                return false;
+            }
+
+            return true;
+        }
+
         /**
          * Sends PRIVMSG to source with $msg
          *
          * @param string $msg
          */
-       protected function say($msg, $source = null) {
-            if(!$source) {
-                $source = $this->source;
-            }
+       protected function say($msg) {
+            $ircUser = ltrim(current(explode('!', $this->data)), ':');
+            $toNick = ($this->source == $this->bot->getNick()) ? $ircUser : $this->source;
 
             $this->connection->sendData(
-                    'PRIVMSG ' . $source . ' :' . $msg
+                'PRIVMSG ' . $toNick . ' :' . $msg
+            );
+        }
+
+        protected function notice($msg) {
+            $ircUser = ltrim(current(explode('!', $this->data)), ':');
+            $toNick = ($this->source == $this->bot->getNick()) ? $ircUser : $this->source;
+
+            $this->connection->sendData(
+                'NOTICE ' . $toNick . ' :' . $msg
             );
         }
 

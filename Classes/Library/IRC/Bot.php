@@ -252,21 +252,22 @@ class Bot {
                 // Explode the server response and get the command.
                 // $source finds the channel or user that the command originated.
                 $source = substr( trim( \Library\FunctionCollection::removeLineBreaks( $args[2] ) ), 0 );
-                $command = substr( trim( \Library\FunctionCollection::removeLineBreaks( $args[3] ) ), 1 );
+                $trigger = strtolower( substr( trim( \Library\FunctionCollection::removeLineBreaks( $args[3] ) ), 1 ) );
                 $arguments = array_slice( $args, 4 );
                 unset( $args );
 
-                // Check if the response was a command.
-                if (stripos( $command, $this->commandPrefix ) === 0) {
-                    $command = ucfirst( substr( $command, 1 ) );
-                    // Command does not exist:
-                    if (!array_key_exists( $command, $this->commands )) {
-                        $this->log( 'The following, not existing, command was called: "' . $command . '".', 'MISSING' );
-                        $this->log( 'The following commands are known by the bot: "' . implode( ',', array_keys( $this->commands ) ) . '".', 'MISSING' );
-                        continue;
+                foreach($this->commands as $commandKey => $command) {
+                    if($command->prefix) {
+                        if (stripos( $trigger, $command->prefix ) !== 0) {
+                            continue;
+                        }
+
+                        $trigger = substr( $trigger, strlen($command->prefix) );
                     }
 
-                    $this->executeCommand( $source, $command, $arguments, $data );
+                    if($trigger === strtolower($commandKey)) {
+                        $this->executeCommand( $source, $commandKey, $arguments, $data );
+                    }
                 }
             }
         } while (true);

@@ -6,14 +6,9 @@ class Register extends \Library\IRC\Command\Base {
 
     protected $numberOfArguments = 2;
 
+    public $prefix = null;
+
     public function command() {
-
-        $ircUser = ltrim(current(explode('!', $this->data)), ':');
-
-        if($this->source !== $this->bot->getNick()) { // ensure this is a private message
-            $this->say('Command must be sent in private message.');
-            return;
-        }
 
         $username = trim($this->arguments[0]);
         $pass = trim($this->arguments[1]);
@@ -21,15 +16,24 @@ class Register extends \Library\IRC\Command\Base {
         $result = \MangaApi::registerUser($username, $pass);
 
         if(!$result['result']) {
-            $this->say($result['message'], $ircUser);
+            $this->notice($result['message']);
         }
         else {
-            $this->say('Username and password is now registered', $ircUser);
-            $this->say('You may now login at http://manga.madokami.com/', $ircUser);
+            $this->notice('Username and password is now registered');
+            $this->notice('You may now login at http://manga.madokami.com/');
         }
     }
 
     protected function getHelp() {
-        return '/msg '.$this->bot->getNick().' !register username password';
+        return '/msg '.$this->bot->getNick().' REGISTER username password';
+    }
+
+    protected function validateCommand(array $arguments, $source, $data) {
+        if($source !== $this->bot->getNick()) { // ensure this is a private message
+            return false; // fail without saying anything
+        }
+
+        $ret = parent::validateCommand($arguments, $source, $data);
+        return $ret;
     }
 }
