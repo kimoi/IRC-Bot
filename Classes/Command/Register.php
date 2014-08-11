@@ -20,7 +20,7 @@ class Register extends \Library\IRC\Command\Base {
         }
         else {
             $this->notice('Username and password is now registered');
-            $this->notice('You may now login at http://manga.madokami.com/');
+            $this->notice('You may now login at https://manga.madokami.com/');
         }
     }
 
