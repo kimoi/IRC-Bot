@@ -44,7 +44,7 @@
     $bot->setNick( $config['nick']);
     $bot->setMaxReconnects( $config['max_reconnects'] );
     $bot->setLogFile( $config['log_file'] );
-    $bot->setInitialCommands($config['initialCommands']);
+    $bot->setNickPassword($config['nickPassword']);
 
     // Add commands to the bot.
     foreach ($config['commands'] as $commandName => $args) {
