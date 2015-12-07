@@ -448,7 +448,7 @@ class Bot {
             if (!is_dir( $logFilePath )) {
                 mkdir( $logFilePath, 0777, true );
             }
-            $this->logFile .= date( 'd-m-Y' ) . '.log';
+            $this->logFile .= date( 'Y-m-d' ) . '.log';
             $this->logFileHandler = fopen( $this->logFile, 'w+' );
         }
     }

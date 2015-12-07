@@ -9,18 +9,23 @@ class Register extends \Library\IRC\Command\Base {
     public $prefix = null;
 
     public function command() {
+        global $config;
 
         $username = trim($this->arguments[0]);
         $pass = trim($this->arguments[1]);
 
-        $result = \MangaApi::registerUser($username, $pass);
+        $url = $config['mangaApi'].'register?'.http_build_query(array('username' => $username, 'password' => $pass));
+        $result = json_decode(file_get_contents($url));
 
-        if(!$result['result']) {
-            $this->notice($result['message']);
+        if(!$result) {
+            $this->notice('A server-side error occured');
+        }
+        elseif(!$result->result) {
+            $this->notice($result->message);
         }
         else {
             $this->notice('Username and password is now registered');
-            $this->notice('You may now login at http://manga.madokami.com/');
+            $this->notice('You may now login at https://manga.madokami.com/');
         }
     }
 

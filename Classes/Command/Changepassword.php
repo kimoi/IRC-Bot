@@ -9,15 +9,20 @@ class Changepassword extends \Library\IRC\Command\Base {
     public $prefix = null;
 
     public function command() {
-        
+        global $config;
+
         $username = trim($this->arguments[0]);
         $oldPassword = trim($this->arguments[1]);
         $newPassword = trim($this->arguments[2]);
 
-        $result = \MangaApi::changePassword($username, $oldPassword, $newPassword);
+        $url = $config['mangaApi'].'changepassword?'.http_build_query(array('username' => $username, 'old' => $oldPassword, 'new' => $newPassword));
+        $result = json_decode(file_get_contents($url));
 
-        if(!$result['result']) {
-            $this->notice($result['message']);
+        if(!$result) {
+            $this->notice('A server-side error occured');
+        }
+        elseif(!$result->result) {
+            $this->notice($result->message);
         }
         else {
             $this->notice('Password has been updated.');
